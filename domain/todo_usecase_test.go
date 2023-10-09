@@ -16,13 +16,14 @@ func TestTodoUsecase_Create_Success(t *testing.T) {
 		content string
 	}
 	tests := []struct {
-		name    string
-		args    args
-		wantErr bool
+		name            string
+		args            args
+		timesToCallRepo int
+		wantErr         bool
 	}{
-		{name: "Success to Create Todo", args: args{content: "write draft"}, wantErr: false},
-		{name: "Fail to Create When content's length > 400:len=400", args: args{content: contents_with_400_string}, wantErr: false},
-		{name: "Fail to Create When content's length > 400:len=401", args: args{content: contents_with_401_string}, wantErr: true},
+		{name: "Success to Create Todo", args: args{content: "write draft"}, timesToCallRepo: 1, wantErr: false},
+		{name: "Fail to Create When content's length > 400:len=400", args: args{content: contents_with_400_string}, timesToCallRepo: 1, wantErr: false},
+		{name: "Fail to Create When content's length > 400:len=401", args: args{content: contents_with_401_string}, timesToCallRepo: 0, wantErr: true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -31,6 +32,7 @@ func TestTodoUsecase_Create_Success(t *testing.T) {
 			mock.
 				EXPECT().
 				Create(gomock.Any()).
+				Times(tt.timesToCallRepo).
 				Return(nil)
 
 			tu := &TodoUsecase{
