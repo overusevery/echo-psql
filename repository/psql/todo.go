@@ -2,7 +2,6 @@ package psql
 
 import (
 	"database/sql"
-	"fmt"
 	"overusevery/echo-psql/domain/entity"
 
 	_ "github.com/lib/pq"
@@ -27,25 +26,8 @@ func (r *PSQLTodoRepository) Create(todo entity.Todo) error {
 	defer db.Close()
 
 	// クエリを実行し、結果を取得
-	rows, err := db.Query("SELECT id FROM todos")
+	_, err = db.Exec("INSERT INTO todos (ID, Content, Status, UpdatedAt, CreatedAt) VALUES ('ID xxxx', 'ToDo xxxxxyyyyzzz', true, NOW(), NOW());")
 	if err != nil {
-		panic(err)
-	}
-	defer rows.Close()
-	fmt.Printf("hello")
-
-	// 結果を処理
-	for rows.Next() {
-		var id string
-		err = rows.Scan(&id)
-		if err != nil {
-			panic(err)
-		}
-		fmt.Printf("ID: %v", id)
-	}
-
-	// エラーチェック
-	if err = rows.Err(); err != nil {
 		panic(err)
 	}
 
