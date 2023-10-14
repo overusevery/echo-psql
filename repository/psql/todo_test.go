@@ -70,7 +70,16 @@ func TestPSQLTodoRepository_Create_twice(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			//setup
-			r := &PSQLTodoRepository{}
+			// PostgreSQLへの接続情報
+			connStr := "user=root dbname=mydb password=changeme sslmode=disable"
+
+			// PostgreSQLデータベースに接続
+			db, err := sql.Open("postgres", connStr)
+			if err != nil {
+				panic(err)
+			}
+			defer db.Close()
+			r := &PSQLTodoRepository{db: *db}
 			EXECUTE_PSQL("DELETE FROM public.todos WHERE content = 'ToDo twice' and status = true;")
 
 			//test

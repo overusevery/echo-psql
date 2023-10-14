@@ -9,6 +9,7 @@ import (
 )
 
 type PSQLTodoRepository struct {
+	db sql.DB
 }
 
 func NewPSQLTodoRepository() *PSQLTodoRepository {
