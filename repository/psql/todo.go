@@ -17,15 +17,6 @@ func NewPSQLTodoRepository() *PSQLTodoRepository {
 }
 
 func (r *PSQLTodoRepository) Create(todo entity.Todo) error {
-	// PostgreSQLへの接続情報
-	connStr := "user=root dbname=mydb password=changeme sslmode=disable"
-
-	// PostgreSQLデータベースに接続
-	db, err := sql.Open("postgres", connStr)
-	if err != nil {
-		panic(err)
-	}
-	defer db.Close()
 	generator, err := sonyflake.New(sonyflake.Settings{})
 	if err != nil {
 		panic(err)
@@ -37,7 +28,7 @@ func (r *PSQLTodoRepository) Create(todo entity.Todo) error {
 	}
 
 	// クエリを実行し、結果を取得
-	_, err = db.Exec("INSERT INTO todos (ID, Content, Status, UpdatedAt, CreatedAt) VALUES ($1, $2, true, NOW(), NOW());", id, todo.Content)
+	_, err = r.db.Exec("INSERT INTO todos (ID, Content, Status, UpdatedAt, CreatedAt) VALUES ($1, $2, true, NOW(), NOW());", id, todo.Content)
 	if err != nil {
 		panic(err)
 	}
