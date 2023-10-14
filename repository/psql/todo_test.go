@@ -46,6 +46,47 @@ func TestPSQLTodoRepository_Create(t *testing.T) {
 	}
 }
 
+func TestPSQLTodoRepository_Create_twice(t *testing.T) {
+	type args struct {
+		todo entity.Todo
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+		{
+			name: "create same contents twice will generate 2 records",
+			args: args{
+				todo: entity.Todo{
+					Content: "ToDo twice",
+					Status:  false,
+				},
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			//setup
+			r := &PSQLTodoRepository{}
+			EXECUTE_PSQL("DELETE FROM public.todos WHERE content = 'ToDo twice' and status = true;")
+
+			//test
+			if err := r.Create(tt.args.todo); (err != nil) != tt.wantErr {
+				t.Errorf("PSQLTodoRepository.Create() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if err := r.Create(tt.args.todo); (err != nil) != tt.wantErr {
+				t.Errorf("PSQLTodoRepository.Create() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if !CHECK_WITH_SELECT_PSQL("SELECT count(1) = 2 FROM public.todos WHERE content = 'ToDo twice' and status = true;") {
+				t.Errorf("Record not found. Failed to Create records")
+			}
+		})
+	}
+}
+
 func EXECUTE_PSQL(query string) {
 
 	// PostgreSQLへの接続情報
