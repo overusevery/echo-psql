@@ -17,7 +17,6 @@ func TestPSQLTodoRepository_Create(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{
 			name: "Success to create",
 			args: args{
@@ -32,14 +31,7 @@ func TestPSQLTodoRepository_Create(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			//setup
-			// PostgreSQLへの接続情報
-			connStr := "user=root dbname=mydb password=changeme sslmode=disable"
-
-			// PostgreSQLデータベースに接続
-			db, err := sql.Open("postgres", connStr)
-			if err != nil {
-				panic(err)
-			}
+			db := setupDB()
 			defer db.Close()
 			r := &PSQLTodoRepository{db: *db}
 			EXECUTE_PSQL("DELETE FROM public.todos WHERE content = 'ToDo xxxxxyyyyzzz' and status = true;")
@@ -79,14 +71,7 @@ func TestPSQLTodoRepository_Create_twice(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			//setup
-			// PostgreSQLへの接続情報
-			connStr := "user=root dbname=mydb password=changeme sslmode=disable"
-
-			// PostgreSQLデータベースに接続
-			db, err := sql.Open("postgres", connStr)
-			if err != nil {
-				panic(err)
-			}
+			db := setupDB()
 			defer db.Close()
 			r := &PSQLTodoRepository{db: *db}
 			EXECUTE_PSQL("DELETE FROM public.todos WHERE content = 'ToDo twice' and status = true;")
@@ -105,8 +90,7 @@ func TestPSQLTodoRepository_Create_twice(t *testing.T) {
 	}
 }
 
-func EXECUTE_PSQL(query string) {
-
+func setupDB() *sql.DB {
 	// PostgreSQLへの接続情報
 	connStr := "user=root dbname=mydb password=changeme sslmode=disable"
 
@@ -115,30 +99,28 @@ func EXECUTE_PSQL(query string) {
 	if err != nil {
 		panic(err)
 	}
+	return db
+}
+
+func EXECUTE_PSQL(query string) {
+	db := setupDB()
 	defer db.Close()
 
 	// クエリを実行し、結果を取得
-	_, err = db.Exec(query)
+	_, err := db.Exec(query)
 	if err != nil {
 		panic(err)
 	}
 }
 
 func CHECK_WITH_SELECT_PSQL(query string) bool {
-	// PostgreSQLへの接続情報
-	connStr := "user=root dbname=mydb password=changeme sslmode=disable"
-
-	// PostgreSQLデータベースに接続
-	db, err := sql.Open("postgres", connStr)
-	if err != nil {
-		panic(err)
-	}
+	db := setupDB()
 	defer db.Close()
 
 	// クエリを実行し、結果を取得
 	row := db.QueryRow(query)
 	var isTrue bool
-	err = row.Scan(&isTrue)
+	err := row.Scan(&isTrue)
 	if err != nil {
 		panic(err)
 	}
