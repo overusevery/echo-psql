@@ -4,9 +4,14 @@ import (
 	"database/sql"
 	"overusevery/echo-psql/domain/entity"
 
+	_ "embed"
+
 	_ "github.com/lib/pq"
 	"github.com/sony/sonyflake"
 )
+
+//go:embed sql/insert_todos.sql
+var SQL_INSERT_TODOS string
 
 type PSQLTodoRepository struct {
 	db sql.DB
@@ -28,7 +33,7 @@ func (r *PSQLTodoRepository) Create(todo entity.Todo) error {
 	}
 
 	// クエリを実行し、結果を取得
-	_, err = r.db.Exec("INSERT INTO todos (ID, Content, Status, UpdatedAt, CreatedAt) VALUES ($1, $2, true, NOW(), NOW());", id, todo.Content)
+	_, err = r.db.Exec(SQL_INSERT_TODOS, id, todo.Content)
 	if err != nil {
 		panic(err)
 	}
