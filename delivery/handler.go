@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"net/http"
 	"overusevery/echo-psql/domain"
 
 	"github.com/labstack/echo/v4"
@@ -19,5 +20,12 @@ func TodoRouter(e *echo.Echo, r domain.TodoRepository) {
 }
 
 func (h *TodoHandler) Create(c echo.Context) error {
-	panic("not implemented")
+	req := new(RequestTodosCreate)
+	if err := c.Bind(req); err != nil {
+		return err
+	}
+	if err := h.usecase.Create(req.Content); err != nil {
+		return err
+	}
+	return c.JSON(http.StatusCreated, req)
 }
