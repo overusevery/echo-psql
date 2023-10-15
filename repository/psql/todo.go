@@ -17,8 +17,8 @@ type PSQLTodoRepository struct {
 	db sql.DB
 }
 
-func NewPSQLTodoRepository() *PSQLTodoRepository {
-	return &PSQLTodoRepository{}
+func NewPSQLTodoRepository(db sql.DB) *PSQLTodoRepository {
+	return &PSQLTodoRepository{db: db}
 }
 
 func (r *PSQLTodoRepository) Create(todo entity.Todo) error {

@@ -9,6 +9,10 @@ type TodoUsecase struct {
 	todoRepository TodoRepository
 }
 
+func NewTodoUsecase(r TodoRepository) *TodoUsecase {
+	return &TodoUsecase{todoRepository: r}
+}
+
 const MAX_CONTENT_LENGTH = 400
 
 func (tu *TodoUsecase) Create(content string) error {

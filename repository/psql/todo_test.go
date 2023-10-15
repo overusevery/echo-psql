@@ -31,7 +31,7 @@ func TestPSQLTodoRepository_Create(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			//setup
-			db := setupDB()
+			db := setuptestDB()
 			defer db.Close()
 			r := &PSQLTodoRepository{db: *db}
 			EXECUTE_PSQL("DELETE FROM public.todos WHERE content = 'ToDo xxxxxyyyyzzz' and status = true;")
@@ -71,7 +71,7 @@ func TestPSQLTodoRepository_Create_twice(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			//setup
-			db := setupDB()
+			db := setuptestDB()
 			defer db.Close()
 			r := &PSQLTodoRepository{db: *db}
 			EXECUTE_PSQL("DELETE FROM public.todos WHERE content = 'ToDo twice' and status = true;")
@@ -90,7 +90,7 @@ func TestPSQLTodoRepository_Create_twice(t *testing.T) {
 	}
 }
 
-func setupDB() *sql.DB {
+func setuptestDB() *sql.DB {
 	// PostgreSQLへの接続情報
 	connStr := "user=root dbname=mydb password=changeme sslmode=disable"
 
@@ -103,7 +103,7 @@ func setupDB() *sql.DB {
 }
 
 func EXECUTE_PSQL(query string) {
-	db := setupDB()
+	db := setuptestDB()
 	defer db.Close()
 
 	// クエリを実行し、結果を取得
@@ -114,7 +114,7 @@ func EXECUTE_PSQL(query string) {
 }
 
 func CHECK_WITH_SELECT_PSQL(query string) bool {
-	db := setupDB()
+	db := setuptestDB()
 	defer db.Close()
 
 	// クエリを実行し、結果を取得
