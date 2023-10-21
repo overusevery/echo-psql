@@ -26,6 +26,12 @@ func (tu *TodoUsecase) Create(content string) error {
 	return tu.todoRepository.Create(newTodo)
 }
 
+func (tu *TodoUsecase) Get(id string) (entity.Todo, error) {
+	todo, err := tu.todoRepository.Get(id)
+	return todo, err
+}
+
 type TodoRepository interface {
 	Create(todo entity.Todo) error
+	Get(id string) (entity.Todo, error)
 }
