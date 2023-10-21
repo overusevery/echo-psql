@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"overusevery/echo-psql/domain/entity"
 	"testing"
+	"time"
 
 	_ "github.com/lib/pq"
 )
@@ -87,6 +88,37 @@ func TestPSQLTodoRepository_Create_twice(t *testing.T) {
 				t.Errorf("Record not found. Failed to Create records")
 			}
 		})
+	}
+}
+func TestPSQLTodoRepository_Get(t *testing.T) {
+	//setup
+	db := setuptestDB()
+	defer db.Close()
+	r := &PSQLTodoRepository{db: *db}
+	EXECUTE_PSQL("DELETE FROM public.todos WHERE id = '1234' and status = true;")
+	EXECUTE_PSQL("INSERT INTO public.todos (id, content, status, updatedat, createdat) VALUES ('1234', 'contents for xxx', true, '2004-10-20 10:23:54', '2004-10-19 10:23:54');")
+
+	//test
+	actualTodoGet, err := r.Get("1234")
+	if err != nil {
+		t.Errorf("PSQLTodoRepository.Get() error = %v", err)
+	}
+	if actualTodoGet.ID != 1234 {
+		t.Errorf("PSQLTodoRepository.Get(); ID doesn't match ; actual = %v, expected = %v", actualTodoGet.ID, 1234)
+	}
+	if actualTodoGet.Content != "contents for xxx" {
+		t.Errorf("PSQLTodoRepository.Get(); Content doesn't match ; actual = %v, expected = %v", actualTodoGet.Content, "contents for xxx")
+	}
+	if actualTodoGet.Status != true {
+		t.Errorf("PSQLTodoRepository.Get(); Status doesn't match ; actual = %v, expected = %v", actualTodoGet.Status, true)
+	}
+	expectedUpdatedate, _ := time.Parse("2006-01-02T15:04:05Z07:00", "2004-10-20 10:23:54")
+	if actualTodoGet.UpdatedAt == expectedUpdatedate {
+		t.Errorf("PSQLTodoRepository.Get(); UpdatedAt doesn't match ; actual = %v, expected = %v", actualTodoGet.UpdatedAt, expectedUpdatedate)
+	}
+	expectedCreateddate, _ := time.Parse("2006-01-02T15:04:05Z07:00", "2004-10-19 10:23:54")
+	if actualTodoGet.CreatedAt == expectedCreateddate {
+		t.Errorf("PSQLTodoRepository.Get(); CreatedAt doesn't match ; actual = %v, expected = %v", actualTodoGet.CreatedAt, expectedCreateddate)
 	}
 }
 

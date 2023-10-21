@@ -40,3 +40,7 @@ func (r *PSQLTodoRepository) Create(todo entity.Todo) error {
 
 	return nil
 }
+
+func (r *PSQLTodoRepository) Get(id string) (entity.Todo, error) {
+	panic("not implemented")
+}
