@@ -16,7 +16,18 @@ func TodoRouter(e *echo.Echo, r domain.TodoRepository) {
 	handler := &TodoHandler{
 		usecase: *usecase,
 	}
+	e.GET("/todos/:id", handler.Get)
 	e.POST("/todos", handler.Create)
+}
+
+func (h *TodoHandler) Get(c echo.Context) error {
+	id := c.Param("id")
+	todo, err := h.usecase.Get(id)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusCreated, Todo2ResponseTodos(*todo))
 }
 
 func (h *TodoHandler) Create(c echo.Context) error {
