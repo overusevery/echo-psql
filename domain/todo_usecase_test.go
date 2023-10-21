@@ -104,7 +104,7 @@ func TestTodoUsecase_Get(t *testing.T) {
 			mock.
 				EXPECT().
 				Get(gomock.Any()).
-				Return(sampleTodo, nil)
+				Return(&sampleTodo, nil)
 
 			tu := &TodoUsecase{
 				todoRepository: mock,
@@ -113,8 +113,8 @@ func TestTodoUsecase_Get(t *testing.T) {
 			if err != nil && !tt.wantErr {
 				t.Errorf("TodoUsecase.Get(), test name = %v , error = %v, wantErr %v", tt.name, err, tt.wantErr)
 			}
-			if !reflect.DeepEqual(todoActual, sampleTodo) {
-				t.Errorf("TodoUsecase.Get(), test name = %v , data should not be modified, actual = %v, expected = %v", tt.name, todoActual, sampleTodo)
+			if !reflect.DeepEqual(*todoActual, sampleTodo) {
+				t.Errorf("TodoUsecase.Get(), test name = %v , data should not be modified, actual = %v, expected = %v", tt.name, *todoActual, sampleTodo)
 			}
 		})
 	}

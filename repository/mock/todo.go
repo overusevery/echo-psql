@@ -53,10 +53,10 @@ func (mr *MockTodoRepositoryMockRecorder) Create(todo any) *gomock.Call {
 }
 
 // Get mocks base method.
-func (m *MockTodoRepository) Get(id string) (entity.Todo, error) {
+func (m *MockTodoRepository) Get(id string) (*entity.Todo, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", id)
-	ret0, _ := ret[0].(entity.Todo)
+	ret0, _ := ret[0].(*entity.Todo)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

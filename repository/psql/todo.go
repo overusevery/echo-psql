@@ -13,6 +13,9 @@ import (
 //go:embed sql/insert_todos.sql
 var SQL_INSERT_TODOS string
 
+//go:embed sql/select_todos_by_id.sql
+var SQL_SELECT_TODOS_BY_ID string
+
 type PSQLTodoRepository struct {
 	db sql.DB
 }
@@ -41,6 +44,11 @@ func (r *PSQLTodoRepository) Create(todo entity.Todo) error {
 	return nil
 }
 
-func (r *PSQLTodoRepository) Get(id string) (entity.Todo, error) {
-	panic("not implemented")
+func (r *PSQLTodoRepository) Get(id string) (*entity.Todo, error) {
+	todo := entity.Todo{}
+	err := r.db.QueryRow(SQL_SELECT_TODOS_BY_ID, id).Scan(&todo.ID, &todo.Content, &todo.Status, &todo.UpdatedAt, &todo.CreatedAt)
+	if err != nil {
+		return nil, err
+	}
+	return &todo, nil
 }
